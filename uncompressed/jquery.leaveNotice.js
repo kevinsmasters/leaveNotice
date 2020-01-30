@@ -1,7 +1,7 @@
 /*
  * LeaveNotice - plug in to notify users of leaving your site
  * Examples and documentation at: http://rewdy.com/tools/leavenotice-jquery-plugin
- * Version: 1.1.3 (07/08/2013)
+ * Version: 1.1.4 (01/30/2020)
  * Copyright (c) 2012 Andrew Meyer
  * Licensed under the MIT License: http://en.wikipedia.org/wiki/MIT_License
  * Requires: jQuery v1.4+
@@ -9,13 +9,13 @@
 
 (function(jQuery) {
 	jQuery.fn.leaveNotice = function(opt){
-		
+
 		// define default parameters
 		var defaults = {
 			siteName: window.location.href,
 			exitMessage: "<p><strong>You have requested a website outside of {SITENAME}.</strong></p><p>Thank you for visiting.</p>",
 			preLinkMessage: "<div class='setoff'><p>You will now be directed to:<br/>{URL}</p></div>",
-			linkString: "", 
+			linkString: "",
 			newWindow: false,
 			timeOut: 4000,
 			overlayId: "ln-blackout",
@@ -25,15 +25,15 @@
 			displayUrlLength: 50,
 			overlayAlpha: 0.3
 		};
-		
+
 		var options = jQuery.extend(defaults, opt);
-		
+
 		return this.each(function(){
 			el = jQuery(this);
-			
+
 			//URL the link goes to
 			var url=el.attr('href');
-			
+
 			//Truncates long URLs to keep 'em pretty
 			//Sets length to option value
 			var ulen=options.displayUrlLength;
@@ -41,21 +41,21 @@
 			if (url.length>=ulen) {
 				var suffix = "...";
 			} else {
-				var suffix = "";	
+				var suffix = "";
 			}
 			//build short URL string
 			var shortUrl=url.substr(0,ulen)+suffix;
-			
+
 			//Get "title" attribute of the link
 			var title = el.attr('title');
-			
+
 			//Sets linkText to title if there is one. If not, it defaults to the URL
 			if (title === undefined || title=="") {
 				var linkText=shortUrl;
 			} else {
 				var linkText=title;
 			}
-			
+
 			options.timeOut = (options.newWindow) ? 0 : options.timeOut;
 
 			el.click(function(){
@@ -80,7 +80,7 @@
 
 				//Append the HTML to the message box
 				jQuery('#'+options.messageBoxId).append(msgContent);
-				
+
 				//If the timer is enabled, set the timer to follow link after desired time.
 				if (options.timeOut>0) {
 					leaveIn=setTimeout(function(){
@@ -90,7 +90,7 @@
 				} else {
 					leaveIn=false;
 				}
-				
+
 				//if newWindow is turned on, add target and click behavior
 				if (options.newWindow) {
 					jQuery('a#'+options.linkId).attr('target', '_blank').click(function(){
@@ -103,24 +103,24 @@
 					closeDialog(options, leaveIn);
 					return false;
 				});
-				
+
 				//Set up event handler for the ESC key
 				jQuery(document).bind('keyup', function(e){
 					if (e.which==27) {
 						closeDialog(options, leaveIn);
 					}
 				});
-				
+
 				// Clears the display when leaving the page to prevent it from showing upon returning.
-				jQuery(window).unload(function(){
+				jQuery(window).on("unload", function(e) {
 					closeDialog(options, leaveIn);
 				});
-				
+
 				return false;
 			});
 		});
 	};
-	
+
 	// private function to close the dialog. This may be public in future
 	// releases, but for now it has to be private.
 	function closeDialog(options, timer) {
@@ -132,6 +132,6 @@
 		});
 		jQuery(document).unbind('keyup');
 	}
-	
+
 	// end and return jQuery object
 })(jQuery);
