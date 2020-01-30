@@ -1,12 +1,3 @@
-/*
- * LeaveNotice - plug in to notify users of leaving your site
- * Examples and documentation at: http://rewdy.com/tools/leavenotice-jquery-plugin
- * Version: 1.1.4 (01/30/2020)
- * Copyright (c) 2012 Andrew Meyer
- * Licensed under the MIT License: http://en.wikipedia.org/wiki/MIT_License
- * Requires: jQuery v1.4+
-*/
-
 (function(jQuery) {
 	jQuery.fn.leaveNotice = function(opt){
 
@@ -15,6 +6,7 @@
 			siteName: window.location.href,
 			exitMessage: "<p><strong>You have requested a website outside of {SITENAME}.</strong></p><p>Thank you for visiting.</p>",
 			preLinkMessage: "<div class='setoff'><p>You will now be directed to:<br/>{URL}</p></div>",
+            closeMessage: "",
 			linkString: "",
 			newWindow: false,
 			timeOut: 4000,
@@ -71,12 +63,21 @@
 				preFilteredContent=options.exitMessage + options.preLinkMessage;
 				msgContent=preFilteredContent.replace(/\{URL\}/g, '<a id="'+options.linkId+'" href="'+url+'" title="'+url+'"'+options.linkString+'>'+linkText+'</a>');
 				msgContent=msgContent.replace(/\{SITENAME\}/g, options.siteName);
-				//If timer is enabled, add the close controls to the HTML
-				if (options.timeOut>0) {
-					msgContent+='<p id="ln-cancelMessage"><a href="#close" id="ln-cancelLink">Cancel</a> or press the ESC key.</p>';
-				} else {
-					msgContent+='<p id="ln-cancelMessage">Click the link above to continue or <a href="#close" id="ln-cancelLink">Cancel</a></p>';
-				}
+
+                //If custom close message is added
+                if (options.closeMessage) {
+                    msgContent+=options.closeMessage;
+
+                    msgContent = msgContent.replace(/\{URL\}/g, '<a id="'+options.linkId+'" href="'+url+'" title="'+url+'"'+options.linkString+'>'+linkText+'</a>')
+                } else {
+                    //If timer is enabled, add the close controls to the HTML
+    				if (options.timeOut>0) {
+    					msgContent+='<p id="ln-cancelMessage"><a href="#close" id="ln-cancelLink">Cancel</a> or press the ESC key.</p>';
+    				} else {
+    					msgContent+='<p id="ln-cancelMessage">Click the link above to continue or <a href="#close" id="ln-cancelLink">Cancel</a></p>';
+    				}
+                }
+
 
 				//Append the HTML to the message box
 				jQuery('#'+options.messageBoxId).append(msgContent);
